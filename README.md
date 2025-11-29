@@ -6,6 +6,7 @@ This implementation will be made using a bitwise representation of the board. Ea
 
 Board representation:
 |    | 28 |    | 29 |    | 30 |    | 31 |
+|----|----|----|----|----|----|----|----|
 | 24 |    | 25 |    | 26 |    | 27 |    |
 |    | 20 |    | 21 |    | 22 |    | 23 |
 | 16 |    | 17 |    | 18 |    | 19 |    |
