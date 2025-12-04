@@ -1,6 +1,21 @@
 # Checkers
 This is the capstone project for the pre-learning for Sigma Labs
-In this project, I will create a command line version of checkers and hopefully create an AI that can play it too.
+
+In this project, I have created an application that allows you to play checkers against an AI.
+
+## How to run the program
+
+After cloning the repository, navigate to the file and run the following command:
+
+```console
+python3 main.py
+```
+
+## How to play:
+
+Moves can be made by clicking the piece you intend to move and then clicking the space you want to move to. The AI opponent will automatically make a move against you after.
+
+## Checkers Implementation
 
 This implementation will be made using a bitwise representation of the board. Each bit will represent a position on the board in the following configuration:
 
@@ -21,5 +36,8 @@ Board representation:
 
  The reason why this implementation is useful is because it allows us to use bitwise operations to do a lot of the logic that we need for the game. For example, if you wanted to know where the white kings were, you could simply do an AND operation with the white pieces and the kings. These operations make finding movable checkers or checkers that can capture go very quickly, which can be useful when creating an AI.
 
-## How to play:
-Because we are using the command line, making moves means choosing a starting position on the board and choosing an end position. These position
+## AI implementation
+
+The AI has been implemented using the minimax algorithm. I plan to also add alpha beta pruning.
+
+The current evaluation function calculates the difference between the counts of the pieces between black and white. In future I will add the number of kings, as well as positional bonuses such as being protected and being central on the board.
