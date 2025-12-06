@@ -5,10 +5,16 @@ In this project, I have created an application that allows you to play checkers 
 
 ## How to run the program
 
-After cloning the repository, navigate to the file and run the following command:
+After cloning the repository, navigate to the file.
 
+To play checkers against an AI, run the following command
 ```console
 python3 main.py
+```
+
+If you would like to use the board generator to get bitwise representation of different boards, then run this command instead:
+```console
+python3 board_generator.py
 ```
 
 ## How to play:
@@ -38,6 +44,14 @@ Board representation:
 
 ## AI implementation
 
-The AI has been implemented using the minimax algorithm. I plan to also add alpha beta pruning.
+The AI has been implemented using the minimax algorithm. I have also added alpha-beta pruning that has allowed the depth to improve significantly.
 
-The current evaluation function calculates the difference between the counts of the pieces between black and white. In future I will add the number of kings, as well as positional bonuses such as being protected and being central on the board.
+The current evaluation function calculates the difference between the counts of the pieces between black and white. This seems to work pretty well, as the AI is better than me, but I'm not very good at checkers. It may still be better to add kings to the evaluation function or to
+
+## References
+
+I got the idea for using checkers bitboards from this website:
+https://3dkingdoms.com/checkers/bitboards.htm
+
+I learned about minimax and alpha-beta pruning from:
+https://www.geeksforgeeks.org/dsa/minimax-algorithm-in-game-theory-set-1-introduction/
