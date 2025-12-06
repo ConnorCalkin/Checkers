@@ -10,13 +10,15 @@ LIGHT_BROWN = (139,69,19)
 DARK_BROWN = (255,248,220)
 BLACK = (52, 28, 2)
 WHITE = (245,222,179)
+GOLD = (218,165,32)
+HIGHLIGHT = (218,165,32,100)
 
 coordinates_indexes = {}
 
 start = None
 end = None
 
-def draw_background():
+def draw_background(display):
     sq_width = WIDTH / 8
     sq_height = HEIGHT / 8
     for i in range(8):
@@ -25,16 +27,17 @@ def draw_background():
                 color = LIGHT_BROWN
             else:
                 color = DARK_BROWN
-            pygame.draw.rect(DISPLAYSURF, 
+            pygame.draw.rect(display, 
                              color, 
                              (sq_width * i, 
                               sq_height * j,
                               sq_width,
                               sq_height))
         
-def draw_checkers(gamestate):
+def draw_checkers(gamestate, display):
     WP = bits_to_indexes(gamestate.WP)
     BP = bits_to_indexes(gamestate.BP)
+    K = bits_to_indexes(gamestate.K)
     sq_width = WIDTH / 8
     sq_height = HEIGHT / 8
     padding = 3
@@ -49,18 +52,33 @@ def draw_checkers(gamestate):
             else:
                 counter += 1
                 continue
-            pygame.draw.ellipse(DISPLAYSURF, 
+            if counter == start:
+                pygame.draw.ellipse(display, 
+                             HIGHLIGHT, 
+                             (sq_width * i, 
+                              sq_height * j,
+                              sq_width ,
+                              sq_height ))
+            pygame.draw.ellipse(display, 
                              color, 
                              (sq_width * i + padding, 
                               sq_height * j + padding,
                               sq_width - 2 * padding,
                               sq_height - 2 * padding))
             
+            if counter in K:
+                pygame.draw.ellipse(display, 
+                             GOLD, 
+                             (sq_width * i + padding * 4, 
+                              sq_height * j + padding * 4,
+                              sq_width - 2 * padding * 4,
+                              sq_height - 2 * padding * 4))
+            
             counter += 1
         
-def redraw(gamestate):
-    draw_background()
-    draw_checkers(gamestate)
+def redraw(gamestate, display):
+    draw_background(display)
+    draw_checkers(gamestate, display)
 
 def screen_to_index(pos):
     x = pos[0]
@@ -75,47 +93,49 @@ def screen_to_index(pos):
         return coordinates_indexes[(coord_x, coord_y)]
 
 
-def take_turn(gamestate, start, end):
+def take_turn(display, gamestate, start, end):
     new_state = gamestate.player_move(start, end)
     if new_state:
         gamestate = new_state
-        redraw(gamestate)
-        new_state, _ = ai.minimax(gamestate,5)
+        redraw(gamestate, display)
+        new_state, _ = ai.minimax(gamestate,8)
         gamestate = new_state
-        redraw(gamestate)
+        redraw(gamestate, display)
     return gamestate
 
-pygame.init()
-DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT))
-gamestate = GameState()
-gamestate.white_turn = False
-ai = AI()
-counter = 0
-redraw(gamestate)
-pygame.display.set_caption('Checkers')
-while True: # main game loop
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.MOUSEBUTTONUP:
-            gamestate, _ = ai.minimax(gamestate, 5)
-            print(counter, ai.evaluate(gamestate))
-            counter += 1
-            redraw(gamestate)
-            # pos = pygame.mouse.get_pos()
-            # index = screen_to_index(pos)
-            # if index == None:
-            #     continue
-            # if start == None:
-            #     start = index
-            # else:
-            #     end = index
-            #     gamestate = take_turn(gamestate, start, end)
-            #     start = None
-            #     end = None
+if __name__ == "__main__":
+    pygame.init()
+    DISPLAYSURF = pygame.display.set_mode((WIDTH, HEIGHT))
+    gamestate = GameState()
+    gamestate.white_turn = True
+    ai = AI()
+    counter = 0
+    redraw(gamestate, DISPLAYSURF)
+    pygame.display.set_caption('Checkers')
+    while True: # main game loop
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                index = screen_to_index(pos)
+                if index == None:
+                    continue
+                if start == None:
+                    start = index
+                    redraw(gamestate, DISPLAYSURF)
+                else:
+                    end = index
+                    new_state = take_turn(DISPLAYSURF, gamestate, start, end)
+                    start = None
+                    end = None          
+                    if new_state:
+                        gamestate = new_state
+                        redraw(gamestate, DISPLAYSURF)
+                    
+                    
                 
-            
-    pygame.display.update()
+        pygame.display.update()
 
 

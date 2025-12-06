@@ -2,6 +2,10 @@ from board import GameState, bits_to_indexes
 import random
 
 class AI:
+    MAX = 1000
+    MIN = -1000
+    
+
     def random_move(self, gamestate):
         possible_moves = self.get_possible_moves(gamestate)
         random_move = random.choice(possible_moves)
@@ -28,9 +32,7 @@ class AI:
                 possible_moves = gamestate.get_moves_black()
         return possible_moves
 
-    def minimax(self, gamestate, max_depth, depth = 0):
-        
-        
+    def minimax(self, gamestate, max_depth, depth = 0, alpha = MIN, beta = MAX):
         possible_moves = self.get_possible_moves(gamestate)
         if depth == max_depth or possible_moves == []:
             return None, self.evaluate(gamestate)
@@ -38,21 +40,28 @@ class AI:
         isMax = not gamestate.white_turn
         best_move = None
         best_score = None
-        for move in possible_moves:
-            new_state = gamestate.make_move_capture(move)
-            _, score = self.minimax(new_state, max_depth, depth + 1)
-            try:
-                if (best_score == None or 
-                    (isMax and best_score < score) or 
-                    (not isMax and best_score > score)):
+
+        if isMax:
+            for move in possible_moves:
+                new_state = gamestate.make_move(move[0] , move[-1])
+                _, score = self.minimax(new_state, max_depth, depth + 1, alpha, beta)
+                if (best_score == None or best_score < score):
                     best_score = score
                     best_move = new_state
-            except:
-                new_state.display()
-                best_move.display()
-                print(best_score)
-                print(score)
-
+                    alpha = max(best_score, alpha)
+                    if alpha >= beta:
+                        break
+        if not isMax:
+            for move in possible_moves:
+                new_state = gamestate.make_move(move[0] , move[-1])
+                _, score = self.minimax(new_state, max_depth, depth + 1, alpha, beta)
+                if (best_score == None or best_score > score):
+                    best_score = score
+                    best_move = new_state
+                    beta = min(best_score, beta)
+                    if alpha >= beta:
+                        break
+                    
         return best_move, best_score
 
 
